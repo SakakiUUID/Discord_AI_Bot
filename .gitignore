@@ -1,0 +1,32 @@
+# Environment variables (Sensitive keys)
+.env
+.env.local
+
+# Python virtual environment & cache
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite Database & Local Data
+data/*.db
+data/*.sqlite3
+data/vip_usage.json
+data/vip_config.json
+
+# Custom / third-party personas, local state & personal ID configs (keep only persona_default.*)
+data/personas/*
+!data/personas/persona_default.txt
+!data/personas/persona_default_setting.json
+
+# Logs & OS generated files
+*.log
+.DS_Store
+Thumbs.db
+
+# Gemini & IDE settings
+.gemini/
+.idea/
+.vscode/

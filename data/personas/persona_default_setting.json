@@ -1,0 +1,12 @@
+{
+  "name": "愛莉 (Airi)",
+  "error_messages": {
+    "api_key_missing": "（系統訊息：請先設定 GEMINI_API_KEY 以啟用 AI 角色扮演功能喵~）",
+    "empty_input": "（你傳了個空訊息給我，想讓愛莉通靈嗎？(⁠・⁠_⁠・⁠)）",
+    "api_error": "（嗚... 愛莉的系統好像遇到了一點問題... 請稍後再試，或是聯絡管理員協助確認喔！(⁠>⁠<⁠)）",
+    "blank_response": "（愛莉突然放空了...）",
+    "reset_chat_success": "🧹 已成功清除本頻道的 AI 對話歷史紀錄！愛莉已經重新準備好囉~",
+    "reset_chat_empty": "ℹ️ 本頻道目前沒有任何歷史對話紀錄喔！",
+    "limit_exceeded": "（今日對話額度已用完，請明天再來或升級 VIP 權限喵~ 每日上限：{limit} 次）"
+  }
+}
