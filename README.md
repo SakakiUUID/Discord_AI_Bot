@@ -233,6 +233,45 @@ docker run -d --name dc_bot -p 8080:8080 --env-file .env -v ./data:/app/data dc-
 
 ---
 
+## 🎭 自訂角色與外部提示詞整合指南
+
+本專案預設僅隨附原創範例角色 [`persona_default.txt`](data/personas/persona_default.txt)（愛莉 Airi）。若想新增自訂角色，可依以下命名規則放入 `data/personas/`（已被 `.gitignore` 排除，不會意外推上 Git）：
+
+* `data/personas/persona_<name>.txt`（**必要**）：角色的 System Prompt。
+* `data/personas/persona_<name>_setting.json`（**選填**）：設定角色顯示名稱（`name`）與各類系統/錯誤訊息（`error_messages`），格式請參考 [`persona_default_setting.json`](data/personas/persona_default_setting.json)。
+* `data/personas/persona_<name>.<png|jpg|webp>`（**選填**）：切換角色時會自動同步更新為 Bot 頭像。
+* 放好檔案後在 Discord 執行 `/chg_persona` 即可一鍵切換（若要替新角色設定多個喚醒別名，可於 [`core/persona_service.py`](core/persona_service.py) 的 `get_active_persona_aliases()` 補充）。
+
+### 🌐 外部角色人設參考來源
+若想體驗社群創作的 AI 擬人化角色，可自行前往以下外部社群站點瀏覽並依原站規範取得：
+* **梗鲸（AI 擬人化人設卡與社群設定）**：https://aigengtu.com/persona
+
+> ⚠️ **第三方素材聲明**：上述外部網站與創作者作品之文字、角色設定及圖片素材，其著作權、商標權與授權規範皆依原發布頁面與原創作者為準，**不包含於本專案 MIT License 範圍內**，請勿將未經授權的第三方文字或圖片直接提交至公開開源倉庫。
+
+### 🔄 將 QQ / 外部人設卡轉換為本專案 Discord 格式（建議請 AI 協助改寫）
+網路上取得的人設卡（包含上方社群來源）**多半原本是為 QQ 機器人或角色扮演前端（如酒館）撰寫的專用 Prompt**，直接放入本專案容易導致 AI 試圖輸出不支援的格式或工具標籤。建議在啟用前，**先把原 Prompt 連同 [`persona_default.txt`](data/personas/persona_default.txt) 一起交給 AI 協助改寫為 Discord 專用格式**，轉換重點如下：
+
+1. **移除 QQ 專屬工具與動作標籤**：刪除 `send_message` 多則發送陣列、`send_poke`（戳一戳）、`replyToMessageId`、手動搜尋/取網頁/寫記憶的 Tool Call 指示，以及貼圖或情緒標籤（如 `[MEME: ...]`、`[EMOTION: ...]`）。本專案的**圖片辨識、Google Search 聯網搜尋與長期向量記憶皆由程式底層自動處理**，模型只需輸出純文字回覆。
+2. **改為 Discord 單則群聊節奏**：將原本「分條發送多則 QQ 訊息」的規則，改為「單則訊息內以換行切分短句」；並禁止輸出空白內容或純括號動作/內心戲（例如 `（高冷地轉頭）`），確保被喚醒時一定會有正常文字回覆。
+3. **配合本專案上下文與系統訊息**：提醒 AI 在群聊中能正確辨識 `【你正回覆的目標訊息】` 與頻道近期對話紀錄，並補上「看不見未附帶的圖片或外部轉發內容時不可憑空編造」等防幻覺規則。
+4. **順便產出 `_setting.json` 與語氣在地化**：若原卡為簡體中文或 QQ 社群黑話，可同時請 AI 潤飾為習慣的用語，並依 [`persona_default_setting.json`](data/personas/persona_default_setting.json) 格式一併生成對應角色的 `error_messages`。
+
+<details>
+<summary>💡 點此展開：可直接複製給 AI 使用的「QQ 轉 Discord Prompt」轉換指令範本</summary>
+
+```text
+請幫我把這份原本為 QQ 機器人設計的角色 Prompt，改寫成適合我這個 Discord AI 群聊機器人專案使用的格式（風格與結構請參考隨附的 persona_default.txt）：
+1. 完整保留原本的核心性格、口癖、人設關係與經典梗，若有必要請順便在地化為自然流暢的繁體中文群聊語氣。
+2. 移除所有 QQ 專用機制與工具標籤（如 send_message 陣列分條發送、send_poke、replyToMessageId、web_fetch、記憶寫入工具呼叫、[MEME: ...] / [EMOTION: ...] 標籤）。
+3. 改為 Discord 單則訊息回覆節奏（想分段請在同一則訊息內自然換行），絕對不可輸出空白或純括號內心戲／動作描寫。
+4. 加入對應本專案的互動規則：圖片理解與聯網搜尋由系統自動支援、無圖或無法讀取連結時不可腦補編造、能正確識別系統注入的【你正回覆的目標訊息】與頻道上下文，且不主動回報「已記住／已寫入記憶」。
+5. 最後請依 persona_default_setting.json 的 JSON Schema，一併幫我生成一份符合該角色口吻的 persona_<name>_setting.json（包含 name 與 error_messages 各欄位）。
+```
+
+</details>
+
+---
+
 ## 📄 授權條款 (License)
 
 本專案原始碼與文件採用 [MIT License](LICENSE) 授權。
